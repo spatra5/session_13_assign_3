@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="AngularApp">
+	<head>
+		<title>Angular Example</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<style>
+			body > .container-fluid {
+				padding: 60px 15px 0;
+			} 
+			.navbar-inverse .navbar-toggle {
+				color: #fff;
+			}
+		</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.js"></script>
+		<script>
+			var myapp = angular.module("AngularApp", ["ngRoute"]);
+			
+			myapp.controller("NavController", function($scope, $route) {
+				$scope.route = $route;
+			});
+			myapp.config(function($routeProvider) {
+			    $routeProvider
+				    .when("/home", {
+				        template : "<h4>Home</h4><p>This is the home page.</p>",
+						controller : "NavController",
+						activeTab : 'home'
+				    })
+				    .when("/aboutus", {
+				        template : "<h4>About us</h4><p>This is about-us page.</p>",
+						controller : "NavController",
+						activeTab : 'aboutus'
+				    })
+				    .when("/contact", {
+				        template : "<h4>Contact</h4><p>This is contact page.</p>",
+						controller : "NavController",
+						activeTab : 'contact'
+				    })
+				    .when("/profile", {
+				        templateUrl : "viewUserDetails.htm",
+						controller : "NavController",
+						activeTab : 'profile'
+				    })
+				    .otherwise({
+				        template : "<h4>Default page</h4><p>This is a default page. Please use the navigation bar for proper navigation.</p>"
+				    });
+			});
+			
+			myapp.controller("MainController", function($scope, UserDetailService) {
+				$scope.message = "User details:";
+				$scope.user = UserDetailService.getUser();
+			});
+			myapp.service("UserDetailService", function(){
+				this.user = {
+					firstName: "john",
+					lastName: "smith",
+					age:  25,
+					employeeId: 'Emp0001',
+					salary: 298766.45343
+				};
+				this.getUser = function(){
+					return this.user;
+				}
+			});
+		</script>
+	</head>
+	<body>
+		<!-- Page Navigation -->
+		<nav class="navbar navbar-inverse navbar-fixed-top" ng-controller="NavController">
+			<div class="container">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header"> 
+					<a class="navbar-brand" href="#">Brand Logo</a>
+					<!-- navbar-toggle: To be displayed in mobile header -->
+					<button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-navigation" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2" aria-expanded="false">
+						<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+					</button>
+					<button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-3" aria-expanded="false">
+						<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+					</button>					
+				</div>
+				<!-- Toggle for button navigation links -->
+				<div class="collapse navbar-collapse navbar-left" id="main-navigation">
+					<ul class="nav navbar-nav">
+						<li ng-class="{active: route.current.activeTab == 'home'}"><a href="#home">Home</a></li>
+						<li ng-class="{active: route.current.activeTab  == 'aboutus'}"><a href="#aboutus">About us</a></li>
+						<li ng-class="{active: route.current.activeTab  == 'profile'}"><a href="#profile">Profile</a></li>
+						<li ng-class="{active: route.current.activeTab  == 'contact'}"><a href="#contact">Contact</a></li>
+					</ul>
+				</div>
+				<!-- Toggle for User buttons -->
+				<div class="collapse navbar-collapse navbar-right" id="bs-example-navbar-collapse-2">
+					<form class="navbar-form navbar-right">
+						<button id="signup-modal" data-toggle="modal" data-target="#myModal"class="btn btn-primary">Sign up</button>
+						<button class="btn btn-info">Login in</button>
+					</form>
+				</div>
+				<!-- Toggle for Search --> 
+				<div class="collapse navbar-collapse navbar-right" id="bs-example-navbar-collapse-3">
+					<form class="navbar-form">
+						<div class="form-group">
+							<input type="text" class="form-control" placeholder="Search">						
+							<button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</nav>
+		
+		<!-- Main Content -->	
+		<div class="container-fluid" ng-controller="MainController">
+			<div class="container">				
+				<div ng-view></div>
+			</div>
+		</div>
+		
+		<script type = "text/ng-template" id = "viewUserDetails.htm">			
+			<h3>{{message}}</h3>
+			<div class="table-responsive">
+				<table class="table">
+					<thead>
+						<th>Employee Id:</th>
+						<th>Name:</th>
+						<th>Age:</th>
+						<th>Salary:</th>
+					</thead>
+					<tbody>
+						<td>{{user.employeeId}}</td>
+						<td>{{user.firstName  + " " + user.lastName | uppercase}}</td>
+						<td>{{user.age | number}}</td>
+						<td>{{user.salary | number : 2}}</td>
+					</tbody>
+				</table>
+			</div>				
+		</script>
+	</body>
+</html>
+
